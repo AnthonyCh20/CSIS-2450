@@ -1,8 +1,16 @@
+/*
+This is a single playthrough of the game hang man the word list is hard coded as an array.
+the user has 7 chances to guess the word before the man on the gallow is drawn.
+If the user guess wrong 7 times the game ends and the correct word is displayed.
+If the user guesses correctly then a congratulations is displayed and the game ends.
+*/
+
 import java.util.Scanner;
 import java.util.Arrays;
 
 public class Main
 {
+//list of word user can guess
   static String[] words = {
     "java", "javascript", "compiler", "variable", "keyboard"
   };
@@ -30,7 +38,7 @@ public class Main
 
     playGame (answer);
 
-  }				//end main
+  }//end main
 
   //turning word in to char array
   public static char[] explode (String word)
@@ -60,7 +68,9 @@ public class Main
 
   }
 
-
+//This function checks the user input and compares it to the hidden answer.
+//If user input is not found we add 1 to the wrong count.
+//We then remove the users guess from our alphabet list.
   public static void guess (char[]answer, char[]hiddenAnswer)
   {
     Scanner input = new Scanner (System.in);
@@ -93,8 +103,6 @@ public class Main
       }
   }
 
-
-
   public static void endGame (char[]answer, char[]hiddenAnswer)
   {
     boolean result = Arrays.equals (answer, hiddenAnswer);
@@ -107,8 +115,7 @@ public class Main
       }
 
   }
-
-
+	
   public static void gallows (char[]answer, char[]hiddenAnswer)
   {
     switch (wrongCount)
