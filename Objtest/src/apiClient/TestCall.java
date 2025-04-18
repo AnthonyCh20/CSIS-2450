@@ -12,24 +12,12 @@ import java.net.http.HttpResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import card.Card;
+import card.PokemonCard;
+
 public class TestCall {
 
-	private String id;
-	private String subType;
-	private String pokemonName;
-	private String superType;
-	private String evolution;
-	private String weakness;
-	private String flavorText;
-	private String attack;
-	private String attackCost;
-	private String attackText;
-
-	private String cardImg;
-
-	private String hp;
-
-	public TestCall(String apiUrl) {
+	public Card testCall(String apiUrl) {
 		// Create HTTPclient
 		HttpClient client = HttpClient.newHttpClient();
 		// Create a URL object
@@ -53,11 +41,11 @@ public class TestCall {
 
 				if (dataArray != null && dataArray.isArray()) {
 					for (JsonNode card : dataArray) {
-						System.out.println(card.get("supertype").asText());
 						checkCardType(card);
+						return createPokemonCard(card);
 
 					}
-					System.out.println(toString());
+					// System.out.println(toString());
 				} else {
 					System.out.println("Data Error!!!!");
 				} // data extraction end
@@ -69,151 +57,8 @@ public class TestCall {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} // end catch
+		return null;
 	}// end main
-
-	/**
-	 * @param card
-	 */
-	private void checkCardType(JsonNode card) {
-		String key = card.get("supertype").asText();
-
-		switch (key) {
-		case "Pokémon": {
-
-			setId(card);
-			setHp(card);
-			setPokemonName(card);
-			setSuperType(card);
-			setSubType(card);
-			setEvolution(card);
-			setWeakness(card);
-			setCardImg(card);
-			break;
-		}
-		default:
-			throw new IllegalArgumentException("Unexpected value: " + key);
-		}
-
-	}
-
-	// Get/Set ID
-	public String getId() {
-		return id;
-	}
-
-	private void setId(JsonNode card) {
-		this.id = card.get("id").asText();
-	}
-
-	// Get/Set Pokemon name
-	public String getPokemonName() {
-		return pokemonName;
-	}
-
-	private void setPokemonName(JsonNode card) {
-		this.pokemonName = card.get("name").asText();
-	}
-
-	// Get/Set evolution
-	public String getEvolution() {
-		return evolution;
-	}
-
-	private void setEvolution(JsonNode card) {
-
-		if (card.has("evolvesTo") && card.get("evolvesTo").isArray()) {
-			JsonNode evoTo = card.get("evolvesTo");
-			for (JsonNode evo : evoTo) {
-				this.evolution = evo.asText();
-			}
-		} else if (card.has("evolvesFrom") && card.get("evolvesFrom").isArray()) {
-			JsonNode evoFrom = card.get("evolvesFrom");
-			for (JsonNode evo : evoFrom) {
-				this.evolution = evo.asText();
-			}
-		}
-	}
-
-	// Get/Set supertype
-	public String getSuperType() {
-		return superType;
-	}
-
-	private void setSuperType(JsonNode card) {
-		if (card.has("supertype") && !card.get("supertype").isNull()) {
-			this.superType = card.get("supertype").asText();
-		}
-	}
-
-	// Get/Set subtype
-	public String getSubType() {
-		return subType;
-	}
-
-	private void setSubType(JsonNode card) {
-
-		if (card.has("subtypes") && card.get("subtypes").isArray()) {
-			JsonNode subType = card.get("subtypes");
-			for (JsonNode st : subType) {
-
-				this.subType = st.asText();
-			}
-		}
-	}
-
-	// Get/Set weakness
-	public String getWeakness() {
-		return weakness;
-	}
-
-	private void setWeakness(JsonNode card) {
-		if (card.has("weaknesses") && card.get("weaknesses").isArray()) {
-			JsonNode weakness = card.get("weaknesses");
-			for (JsonNode weak : weakness) {
-				this.weakness = weak.get("type").asText() + " " + weak.get("value").asText();
-			}
-		}
-	}
-
-	// Get/Set flavor text
-	public String getFlavorText() {
-		return flavorText;
-	}
-
-	private void setFlavorText(JsonNode card) {
-		this.flavorText = flavorText;
-	}
-
-	// Get/Set attack
-	public String getAttack() {
-		return attack;
-	}
-
-	private void setAttack(JsonNode card) {
-		this.attack = attack;
-	}
-
-	// Get/Set card image
-	public String getCardImg() {
-		return cardImg;
-	}
-
-	private void setCardImg(JsonNode card) {
-		if (card.has("images") && card.get("images").isObject()) {
-			JsonNode img = card.get("images");
-			this.cardImg = img.get("large").asText();
-
-		}
-	}
-
-	// Get/Set HP
-	public String getHp() {
-		return hp;
-	}
-
-	private void setHp(JsonNode card) {
-		this.hp = card.get("hp").asText();
-	}
 
 	/**
 	 * @param response
@@ -239,13 +84,123 @@ public class TestCall {
 		return json;
 	}
 
-	public String toString() {
+	/**
+	 * @param card
+	 */
+	private void checkCardType(JsonNode card) {
+		String key = card.get("supertype").asText();
 
-		String ans = String.format("Id: %s \nSubtype: %s\nSupertype: %s\nWeakness: %s\nHP: %s", getId(), getSubType(),
-				getSuperType(), getWeakness(), getHp());
-
-		return ans;
+		switch (key) {
+		case "Pokémon": {
+			PokemonCard pokeCard = createPokemonCard(card);
+			System.out.println(pokeCard.print());
+			break;
+		}
+		default:
+			throw new IllegalArgumentException("Unexpected value: " + key);
+		}
 
 	}
 
+	private PokemonCard createPokemonCard(JsonNode card) {
+		String id = card.get("id").asText();
+		String supertype = card.get("supertype").asText();
+		String name = card.get("name").asText();
+		String type = extractType(card);
+		String cardImg = card.get("images").get("large").asText();
+		String subtype = extractSubtype(card);
+		String evolution = extractEvolution(card);
+		String weakness = extractWeakness(card);
+		String flavorText = card.has("flavorText") ? card.get("flavorText").asText() : "";
+		String attack = extractAttacks(card);
+		String attackCost = extractAttackCost(card);
+		String attackText = extractAttackText(card);
+		String hp = card.get("hp").asText();
+		String attackDmg = extractDmg(card);
+//		String setName = extractSetName(card);
+//		String setSeries = extractSetSeries(card);
+		return new PokemonCard(id,supertype,name,type,cardImg,subtype,evolution,weakness,
+				flavorText,attack,attackCost,attackText,hp,attackDmg);
+	}
+
+	private String extractDmg(JsonNode card) {
+		if(card.has("attacks") && card.get("attacks").isArray()) {
+			JsonNode attack = card.get("attacks");
+			for(JsonNode a : attack) {
+				return a.get("damage").asText();
+			}
+		}
+		return "";
+	}
+
+	private String extractAttackCost(JsonNode card) {
+		if(card.has("attacks") && card.get("attacks").isArray()) {
+			JsonNode attack = card.get("attacks");
+			for(JsonNode a : attack) {
+				return a.get("cost").get(0).asText();
+			}
+		}
+		return "";
+	}
+
+	private String extractAttackText(JsonNode card) {
+		if(card.has("attacks") && card.get("attacks").isArray()) {
+			JsonNode attack = card.get("attacks");
+			for(JsonNode a : attack) {
+				return a.get("text").asText();
+			}
+		}
+		return "";
+	}
+
+	private String extractAttacks(JsonNode card) {
+		if(card.has("attacks") && card.get("attacks").isArray()) {
+			JsonNode attack = card.get("attacks");
+			if(attack.isArray() && attack.size() > 1) {
+				String[] atkList = new String[attack.size()];
+				int i = 0;
+				for(JsonNode a : attack) {
+					atkList[i] = a.asText();
+					i++;
+				}
+			}
+		}
+		return "";
+	}
+
+	private String extractWeakness(JsonNode card) {
+		if(card.has("weaknesses") && card.get("weaknesses").isArray()) {
+			JsonNode weakness = card.get("weaknesses");
+			JsonNode weak = weakness.get(0);
+			return weak.get("type").asText() + " " + weak.get("value").asText();
+		}
+		return "";
+	}
+
+	private String extractEvolution(JsonNode card) {
+		if(card.has("evolvesTo") && card.get("evolvesTo").isArray()) {
+			JsonNode evoTo = card.get("evolvesTo");
+			return evoTo.asText();
+		}else if(card.has("evolvesFrom")) {
+			JsonNode evoFrom = card.get("evolvesFrom");
+			return evoFrom.asText();
+		}
+		return "";
+	}
+
+	private String extractType(JsonNode card) {
+		if(card.has("types") && card.get("types").isArray()) {
+			JsonNode type = card.get("types");
+			return type.get(0).asText();
+		}
+		return "";
+	}
+
+	private String extractSubtype(JsonNode card) {
+		if (card.has("subtypes") && card.get("subtypes").isArray()) {
+			JsonNode sub = card.get("subtypes");
+			return sub.get(0).asText();
+		}
+		return "";
+	}
 }// end class

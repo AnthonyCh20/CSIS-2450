@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="Objtest/src"/>
+	<classpathentry kind="lib" path="pokiAPItest/lib/jackson-annotations-2.18.2.jar"/>
+	<classpathentry kind="lib" path="pokiAPItest/lib/jackson-core-2.18.2.jar"/>
+	<classpathentry kind="lib" path="pokiAPItest/lib/jackson-databind-2.18.2.jar"/>
+</classpath>
