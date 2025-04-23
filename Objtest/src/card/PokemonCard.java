@@ -1,5 +1,8 @@
 package card;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PokemonCard extends Card {
 
 	private String subType;
@@ -7,7 +10,7 @@ public class PokemonCard extends Card {
 	private String evolution;
 	private String weakness;
 	private String flavorText;
-	private String attack;
+	private List<Attack> attack = new ArrayList();
 	private String attackCost;
 	private String attackText;
 	private String attackDmg;
@@ -15,7 +18,7 @@ public class PokemonCard extends Card {
 	private String hp;
 
 	public PokemonCard(String id, String superType, String name,String type,String cardImg, String subtype, String evolution,
-			String weakness, String flavorText, String attack, String attackCost, String attackText, String hp,String attackDmg) 
+			String weakness, String flavorText, List<Attack> attack, String hp) 
 	{
 		super(id, superType, name, cardImg);
 		this.subType = subtype;
@@ -23,11 +26,10 @@ public class PokemonCard extends Card {
 		this.evolution = evolution;
 		this.weakness = weakness;
 		this.flavorText = flavorText;
-		this.attack = attack;
-		this.attackCost = attackCost;
-		this.attackText = attackText;
-		this.attackDmg = attackDmg;
 		this.hp = hp;
+		if(attack != null) {
+			this.attack.addAll(attack);
+		}
 	}
 
 	public String getType() {
@@ -50,7 +52,7 @@ public class PokemonCard extends Card {
 		return flavorText;
 	}
 
-	public String getAttack() {
+	public List<Attack> getAttack() {
 		return attack;
 	}
 
