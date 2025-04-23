@@ -3,6 +3,7 @@ package testGUI;
 import java.awt.Image;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
@@ -11,6 +12,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
+
+import card.Attack;
 
 import java.awt.CardLayout;
 import javax.swing.JLabel;
@@ -41,11 +44,8 @@ public class CardDisplay extends JFrame {
 			String type, 
 			String weakness,
 			String flavorText, 
-			String attack,
-			String attackCost, 
-			String attackText, 
-			String hp,
-			String attackDmg) {
+			List<Attack> attack, 
+			String hp) {
 		setTitle("Display: " + name);
 		
 		Image img = new ImageIcon("C:\\Users\\ajp48\\OneDrive\\Documents\\GitHub\\CSIS-2450\\Objtest\\img\\pokeball-png-45343.png").getImage();
@@ -63,10 +63,7 @@ public class CardDisplay extends JFrame {
 		displayCard(cardImg);
 
 		JPanel cardNamePanel = new JPanel();
-		
 		setPanelColorToTypeColor(cardNamePanel,type);
-		
-		
 		cardNamePanel.setBounds(471, 11, 504, 85);
 		contentPane.add(cardNamePanel);
 
@@ -85,10 +82,17 @@ public class CardDisplay extends JFrame {
 		displayDetails(panel,"Type: ", type);
 		displayDetails(panel,"HP: ", hp);
 		displayDetails(panel,"Evolution: ", evolution);
-		displayDetails(panel,"Attack: ", attack);
-		displayDetails(panel,"Attack Cost: ", attackCost);
-		displayDetails(panel,"Attack Damage: ", attackDmg);
-		displayDetails(panel,"Attack Text: ", attackText);
+		
+		if(!attack.isEmpty() && attack != null) {
+			for (Attack atk : attack)
+			{
+				displayDetails(panel, "Attack: ", atk.getName());
+				displayDetails(panel, "Cost: ", atk.getCost());
+				displayDetails(panel, "Damage: ", atk.getDamage());
+				displayDetails(panel, "Text: ", atk.getText());
+				
+			}
+		}
 		
 		if(!flavorText.isBlank()) 
 		{ 
@@ -215,7 +219,7 @@ public class CardDisplay extends JFrame {
 		contentPane.add(cardPanel);
 		cardPanel.setLayout(new CardLayout(0, 0));
 		try {
-			@SuppressWarnings("deprecation")
+			
 			URL input = new URL(imgUrl);
 
 			Image img = ImageIO.read(input);

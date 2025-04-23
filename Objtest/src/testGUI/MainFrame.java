@@ -26,9 +26,7 @@ import java.awt.event.ActionEvent;
 public class MainFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private JPanel contentPane;
-	
-	
+	private JPanel contentPane;	
 
 	/**
 	 * Launch the application.
@@ -107,10 +105,8 @@ public class MainFrame extends JFrame {
 		searchBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				TestCall tc = new TestCall();
-				Card card = tc.testCall("https://api.pokemontcg.io/v2/cards?q=name:charizard&page=1&pageSize=1");
+				Card card = tc.testCall("https://api.pokemontcg.io/v2/cards?q=name:pikachu&page=1&pageSize=1");
 				
-				card.print();
-
 				CardDisplay cd = new CardDisplay(card.getName(), 
 						card.getId(), 
 						card.getSuperType(),
@@ -120,11 +116,8 @@ public class MainFrame extends JFrame {
 						(card instanceof PokemonCard) ? ((PokemonCard) card).getType() : "",
 						(card instanceof PokemonCard) ? ((PokemonCard) card).getWeakness() : "",
 						(card instanceof PokemonCard) ? ((PokemonCard) card).getFlavorText() : "",
-						(card instanceof PokemonCard) ? ((PokemonCard) card).getAttack() : "",
-						(card instanceof PokemonCard) ? ((PokemonCard) card).getAttackCost() : "",
-						(card instanceof PokemonCard) ? ((PokemonCard) card).getAttackText() : "",
-						(card instanceof PokemonCard) ? ((PokemonCard) card).getHp() : "",
-						(card instanceof PokemonCard) ? ((PokemonCard) card).getAttackDmg() : "");
+						(card instanceof PokemonCard) ? ((PokemonCard) card).getAttack() : null,
+						(card instanceof PokemonCard) ? ((PokemonCard) card).getHp() : "");
 				cd.setVisible(true);
 				dispose();
 			}

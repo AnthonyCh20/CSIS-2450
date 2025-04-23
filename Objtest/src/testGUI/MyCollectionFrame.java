@@ -1,6 +1,5 @@
 package testGUI;
 
-import java.awt.Toolkit;
 import java.io.IOException;
 import java.util.List;
 import java.net.URL;
@@ -95,7 +94,7 @@ public class MyCollectionFrame extends JFrame {
 		cardPanel.setLayout(new GridLayout(0, 4, 10, 10));
 		for (int i = 0; i < cardNames.size(); i++) {
 			try {
-				@SuppressWarnings("deprecation")
+				
 				URL input = new URL("https://images.pokemontcg.io/xy1/1_hires.png");
 				
 				Image img = ImageIO.read(input);

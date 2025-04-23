@@ -8,10 +8,13 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import card.Attack;
 import card.Card;
 import card.PokemonCard;
 
@@ -93,7 +96,6 @@ public class TestCall {
 		switch (key) {
 		case "Pokémon": {
 			PokemonCard pokeCard = createPokemonCard(card);
-			System.out.println(pokeCard.print());
 			break;
 		}
 		default:
@@ -112,60 +114,48 @@ public class TestCall {
 		String evolution = extractEvolution(card);
 		String weakness = extractWeakness(card);
 		String flavorText = card.has("flavorText") ? card.get("flavorText").asText() : "";
-		String attack = extractAttacks(card);
-		String attackCost = extractAttackCost(card);
-		String attackText = extractAttackText(card);
+		List<Attack> attack = extractAttacks(card);
 		String hp = card.get("hp").asText();
-		String attackDmg = extractDmg(card);
+		
 //		String setName = extractSetName(card);
 //		String setSeries = extractSetSeries(card);
 		return new PokemonCard(id,supertype,name,type,cardImg,subtype,evolution,weakness,
-				flavorText,attack,attackCost,attackText,hp,attackDmg);
+				flavorText,attack,hp);
 	}
 
-	private String extractDmg(JsonNode card) {
-		if(card.has("attacks") && card.get("attacks").isArray()) {
-			JsonNode attack = card.get("attacks");
-			for(JsonNode a : attack) {
-				return a.get("damage").asText();
-			}
-		}
-		return "";
-	}
 
-	private String extractAttackCost(JsonNode card) {
+	private List<Attack> extractAttacks(JsonNode card) {
+		List<Attack> atkList = new ArrayList<>();
+		
 		if(card.has("attacks") && card.get("attacks").isArray()) {
-			JsonNode attack = card.get("attacks");
-			for(JsonNode a : attack) {
-				return a.get("cost").get(0).asText();
-			}
-		}
-		return "";
-	}
+			for (JsonNode attackNode : card.get("attacks"))
+			{
+				String cardName = attackNode.has("name") ? attackNode.get("name").asText() : "";
+				
+				StringBuilder costBuilder = new StringBuilder();
+				if (attackNode.has("cost"))
+				{
+					JsonNode costNode = attackNode.get("cost");
 
-	private String extractAttackText(JsonNode card) {
-		if(card.has("attacks") && card.get("attacks").isArray()) {
-			JsonNode attack = card.get("attacks");
-			for(JsonNode a : attack) {
-				return a.get("text").asText();
-			}
-		}
-		return "";
-	}
-
-	private String extractAttacks(JsonNode card) {
-		if(card.has("attacks") && card.get("attacks").isArray()) {
-			JsonNode attack = card.get("attacks");
-			if(attack.isArray() && attack.size() > 1) {
-				String[] atkList = new String[attack.size()];
-				int i = 0;
-				for(JsonNode a : attack) {
-					atkList[i] = a.asText();
-					i++;
+					for (JsonNode cost : costNode)
+					{
+						if (costBuilder.length() > 0)
+						{
+							costBuilder.append(",");							
+						}
+						
+						costBuilder.append(cost.asText());
+					}
 				}
+					
+					String damage = attackNode.has("damage") ? attackNode.get("damage").asText() : "";
+					String text = attackNode.has("text") ? attackNode.get("text").asText() : "";
+					
+					atkList.add(new Attack(cardName,costBuilder.toString(),damage,text));
 			}
 		}
-		return "";
+	
+		return atkList;
 	}
 
 	private String extractWeakness(JsonNode card) {

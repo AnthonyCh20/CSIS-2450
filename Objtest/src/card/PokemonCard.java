@@ -10,11 +10,7 @@ public class PokemonCard extends Card {
 	private String evolution;
 	private String weakness;
 	private String flavorText;
-	private List<Attack> attack = new ArrayList();
-	private String attackCost;
-	private String attackText;
-	private String attackDmg;
-
+	private List<Attack> attack = new ArrayList<Attack>();
 	private String hp;
 
 	public PokemonCard(String id, String superType, String name,String type,String cardImg, String subtype, String evolution,
@@ -56,25 +52,13 @@ public class PokemonCard extends Card {
 		return attack;
 	}
 
-	public String getAttackCost() {
-		return attackCost;
-	}
-
-	public String getAttackText() {
-		return attackText;
-	}
-
 	public String getHp() {
 		return hp;
 	}
 
-	public String getAttackDmg() {
-		return attackDmg;
-	}
-
 	@Override
 	public String print() {
-		return super.print() + String.format("Subtype: %s\nEvolution: %s\nWeakness: %s\nFlavor Text: %s\nAttack: %s\nAttack Cost: %s\nAttack Text: %s\nHP: %s", subType,evolution,weakness,flavorText,attack,attackCost,attackText,hp);
+		return super.print() + String.format("Subtype: %s\nEvolution: %s\nWeakness: %s\nFlavor Text: %s\nAttack: %s\nHP: %s", subType,evolution,weakness,flavorText,attack,hp);
 	}
 
 }
