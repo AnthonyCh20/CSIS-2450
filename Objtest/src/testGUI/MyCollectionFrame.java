@@ -37,7 +37,9 @@ public class MyCollectionFrame extends JFrame {
 	 */
 	public MyCollectionFrame() {
 		setTitle("My Collection");
-		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\kings\\eclipse-workspace\\testGUI\\icons\\pokeball-png-45343.png"));
+		
+		Image img = new ImageIcon("C:\\Users\\ajp48\\OneDrive\\Documents\\GitHub\\CSIS-2450\\Objtest\\img\\pokeball-png-45343.png").getImage();
+		setIconImage(img);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1062, 500);

@@ -27,6 +27,8 @@ public class MainFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
+	
+	
 
 	/**
 	 * Launch the application.
@@ -48,7 +50,7 @@ public class MainFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public MainFrame() {
-		Image img = new ImageIcon(this.getClass().getResource("/pokeball-png-45343.png")).getImage();
+		Image img = new ImageIcon("C:\\Users\\ajp48\\OneDrive\\Documents\\GitHub\\CSIS-2450\\Objtest\\img\\pokeball-png-45343.png").getImage();
 
 		setTitle("Pokemon Collection Orginizer");
 		setIconImage(img);
@@ -94,6 +96,8 @@ public class MainFrame extends JFrame {
 		aboutBtn.setFont(new Font("Cambria", Font.PLAIN, 14));
 		aboutBtn.setBounds(23, 413, 110, 39);
 		contentPane.add(aboutBtn);
+		
+		setLocationRelativeTo(null);
 	}
 
 	/**
@@ -102,9 +106,9 @@ public class MainFrame extends JFrame {
 	private void displayCard(JButton searchBtn) {
 		searchBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				dispose();
 				TestCall tc = new TestCall();
-				Card card = tc.testCall("https://api.pokemontcg.io/v2/cards?q=name:Charizard&page=1&pageSize=1");
+				Card card = tc.testCall("https://api.pokemontcg.io/v2/cards?q=name:charizard&page=1&pageSize=1");
+				
 				card.print();
 
 				CardDisplay cd = new CardDisplay(card.getName(), 
@@ -122,6 +126,7 @@ public class MainFrame extends JFrame {
 						(card instanceof PokemonCard) ? ((PokemonCard) card).getHp() : "",
 						(card instanceof PokemonCard) ? ((PokemonCard) card).getAttackDmg() : "");
 				cd.setVisible(true);
+				dispose();
 			}
 		});
 	}
