@@ -14,13 +14,15 @@ import java.util.List;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import card.Abilities;
 import card.Attack;
-import card.Card;
 import card.PokemonCard;
 
 public class TestCall {
 
-	public Card testCall(String apiUrl) {
+	List<PokemonCard> cardList = new ArrayList<>();
+	
+	public List<PokemonCard> testCall(String apiUrl) {
 		// Create HTTPclient
 		HttpClient client = HttpClient.newHttpClient();
 		// Create a URL object
@@ -45,10 +47,10 @@ public class TestCall {
 				if (dataArray != null && dataArray.isArray()) {
 					for (JsonNode card : dataArray) {
 						checkCardType(card);
-						return createPokemonCard(card);
-
+						
+						
 					}
-					// System.out.println(toString());
+					return cardList;
 				} else {
 					System.out.println("Data Error!!!!");
 				} // data extraction end
@@ -93,12 +95,16 @@ public class TestCall {
 	private void checkCardType(JsonNode card) {
 		String key = card.get("supertype").asText();
 
-		switch (key) {
-		case "Pokémon": {
-			PokemonCard pokeCard = createPokemonCard(card);
+		switch (key.toLowerCase()) {
+		case "pokémon": {
+			cardList.add(createPokemonCard(card));
+			break;
+		}
+		case "trainer":{
 			break;
 		}
 		default:
+			
 			throw new IllegalArgumentException("Unexpected value: " + key);
 		}
 
@@ -114,15 +120,36 @@ public class TestCall {
 		String evolution = extractEvolution(card);
 		String weakness = extractWeakness(card);
 		String flavorText = card.has("flavorText") ? card.get("flavorText").asText() : "";
+		List<Abilities> abilities = extractAbilites(card);
 		List<Attack> attack = extractAttacks(card);
 		String hp = card.get("hp").asText();
 		
 //		String setName = extractSetName(card);
 //		String setSeries = extractSetSeries(card);
 		return new PokemonCard(id,supertype,name,type,cardImg,subtype,evolution,weakness,
-				flavorText,attack,hp);
+				flavorText,abilities,attack,hp);
 	}
 
+
+	private List<Abilities> extractAbilites(JsonNode card)
+	{
+		List<Abilities> abilitiesList = new ArrayList<>();
+		
+		if (card.has("abilities") && card.get("abilities").isArray())
+		{
+			JsonNode abilitiesNode = card.get("abilities");
+			for (JsonNode ability : abilitiesNode)
+			{
+				String abilityName = ability.has("name") ? ability.get("name").asText() : "";
+				String abilityType = ability.has("type") ? ability.get("type").asText() : "";
+				String abilityText = ability.has("text") ? ability.get("text").asText() : "";
+				
+				abilitiesList.add(new Abilities(abilityName,abilityType,abilityText));
+			}
+		}
+		
+		return abilitiesList;
+	}
 
 	private List<Attack> extractAttacks(JsonNode card) {
 		List<Attack> atkList = new ArrayList<>();

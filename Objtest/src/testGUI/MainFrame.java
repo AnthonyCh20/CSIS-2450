@@ -7,7 +7,6 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import apiClient.TestCall;
-import card.Card;
 import card.PokemonCard;
 
 import javax.swing.JLabel;
@@ -21,6 +20,7 @@ import java.awt.Color;
 import javax.swing.ImageIcon;
 
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.awt.event.ActionEvent;
 
 public class MainFrame extends JFrame {
@@ -74,7 +74,7 @@ public class MainFrame extends JFrame {
 		contentPane.add(myCollectionBtn);
 
 		JButton searchBtn = new JButton("Search");
-		displayCard(searchBtn);
+		//displayCard(searchBtn);
 		searchBtn.setFont(new Font("Cambria", Font.PLAIN, 14));
 		searchBtn.setBounds(48, 150, 224, 44);
 		contentPane.add(searchBtn);
@@ -98,31 +98,36 @@ public class MainFrame extends JFrame {
 		setLocationRelativeTo(null);
 	}
 
-	/**
-	 * @param searchBtn
-	 */
-	private void displayCard(JButton searchBtn) {
-		searchBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				TestCall tc = new TestCall();
-				Card card = tc.testCall("https://api.pokemontcg.io/v2/cards?q=name:pikachu&page=1&pageSize=1");
-				
-				CardDisplay cd = new CardDisplay(card.getName(), 
-						card.getId(), 
-						card.getSuperType(),
-						card.getCardImg(),
-						(card instanceof PokemonCard) ? ((PokemonCard) card).getEvolution() : "",
-						(card instanceof PokemonCard) ? ((PokemonCard) card).getSubType() : "", 
-						(card instanceof PokemonCard) ? ((PokemonCard) card).getType() : "",
-						(card instanceof PokemonCard) ? ((PokemonCard) card).getWeakness() : "",
-						(card instanceof PokemonCard) ? ((PokemonCard) card).getFlavorText() : "",
-						(card instanceof PokemonCard) ? ((PokemonCard) card).getAttack() : null,
-						(card instanceof PokemonCard) ? ((PokemonCard) card).getHp() : "");
-				cd.setVisible(true);
-				dispose();
-			}
-		});
-	}
+//	/**
+//	 * @param searchBtn
+//	 */
+//	private void displayCard(JButton searchBtn) {
+//		searchBtn.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				TestCall tc = new TestCall();
+//				List<PokemonCard> card = tc.testCall("https://api.pokemontcg.io/v2/cards?q=name:charizard&page=1&pageSize=1");
+//				
+//				Card firstCard = card.get(0);
+//				
+//				System.out.println(firstCard.print());
+//				
+//				CardDisplay cd = new CardDisplay(this,firstCard.getName(), 
+//						firstCard.getId(), 
+//						firstCard.getSuperType(),
+//						firstCard.getCardImg(),
+//						((PokemonCard) firstCard).getEvolution(),
+//						((PokemonCard) firstCard).getSubType(), 
+//						((PokemonCard) firstCard).getType(),
+//						((PokemonCard) firstCard).getWeakness(),
+//						((PokemonCard) firstCard).getFlavorText(),
+//						((PokemonCard) firstCard).getAttack(),
+//						((PokemonCard) firstCard).getHp());
+//				cd.setVisible(true);
+//				
+//				dispose();
+//			}
+//		});
+//	}
 
 	/**
 	 * @param myCollectionBtn Closes main page and opens collection page
@@ -130,7 +135,9 @@ public class MainFrame extends JFrame {
 	private void myCollectionBtnListener(JButton myCollectionBtn) {
 		myCollectionBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				MyCollectionFrame collection = new MyCollectionFrame();
+				TestCall tc = new TestCall();
+				List<PokemonCard> card = tc.testCall("https://api.pokemontcg.io/v2/cards?q=name:charizard&page=1&pageSize=25");
+				MyCollectionFrame collection = new MyCollectionFrame(card);
 				collection.setVisible(true);
 				dispose();
 			}

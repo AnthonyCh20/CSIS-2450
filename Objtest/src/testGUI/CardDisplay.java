@@ -10,9 +10,11 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
+import card.Abilities;
 import card.Attack;
 
 import java.awt.CardLayout;
@@ -35,15 +37,16 @@ public class CardDisplay extends JFrame {
 	 * @param weakness 
 	 * @param string 
 	 */
-	public CardDisplay(String name,
+	public CardDisplay(MyCollectionFrame collectionFrame, String name,
 			String id, 
 			String supertype,
-			String cardImg ,
+			String cardImg,
 			String evolution, 
 			String subtype,
 			String type, 
 			String weakness,
 			String flavorText, 
+			List<Abilities> abilities,
 			List<Attack> attack, 
 			String hp) {
 		setTitle("Display: " + name);
@@ -52,7 +55,7 @@ public class CardDisplay extends JFrame {
 		setIconImage(img);
 
 		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 1001, 654);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -72,9 +75,12 @@ public class CardDisplay extends JFrame {
 		cardNamePanel.add(nameLbl);
 
 		JPanel panel = new JPanel();
-		panel.setBounds(471, 114, 504, 372);
-		contentPane.add(panel);
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		
+		JScrollPane scrollPane = new JScrollPane(panel);
+	    scrollPane.setBounds(471, 114, 504, 372);
+	    scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+	    contentPane.add(scrollPane);
 		
 		displayDetails(panel,"ID: ", id);
 		displayDetails(panel,"Sub Type: ", subtype);
@@ -83,7 +89,7 @@ public class CardDisplay extends JFrame {
 		displayDetails(panel,"HP: ", hp);
 		displayDetails(panel,"Evolution: ", evolution);
 		
-		if(!attack.isEmpty() && attack != null) {
+		if(attack != null && !attack.isEmpty()) {
 			for (Attack atk : attack)
 			{
 				displayDetails(panel, "Attack: ", atk.getName());
@@ -91,6 +97,16 @@ public class CardDisplay extends JFrame {
 				displayDetails(panel, "Damage: ", atk.getDamage());
 				displayDetails(panel, "Text: ", atk.getText());
 				
+			}
+		}
+		
+		if (abilities != null && !abilities.isEmpty())
+		{
+			for (Abilities ability : abilities)
+			{
+				displayDetails(panel, "Ability Name: ", ability.getName());
+				displayDetails(panel, "Ability Type: ", ability.getType());
+				displayDetails(panel, "Ability Text: ", ability.getText());
 			}
 		}
 		
@@ -102,9 +118,10 @@ public class CardDisplay extends JFrame {
 		JButton homeBtn = new JButton("Home");
 		homeBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				MainFrame mf = new MainFrame();
-				mf.setVisible(true);
+				
+				collectionFrame.dispose();
 				dispose();
+				new MainFrame().setVisible(true);
 			}
 		});
 		homeBtn.setBounds(858, 510, 89, 48);
